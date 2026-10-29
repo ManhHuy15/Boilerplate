@@ -1,0 +1,31 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+
+# Visual Studio / JetBrains
+.vs/
+.idea/
+*.user
+*.suo
+
+# .NET CLI
+.dotnet-cli-home/
+
+# Node & Next.js
+node_modules/
+.next/
+out/
+dist/
+*.tsbuildinfo
+
+# Env & Secrets
+.env
+.env*.local
+appsettings.Local.json
+
+# Logs
+*.log
+npm-debug.log*
+

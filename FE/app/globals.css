@@ -1,0 +1,42 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+
+@theme {
+  --color-brand-ink: #172019;
+  --color-brand-deep: #183c2d;
+  --color-brand-lime: #b9f44a;
+  --color-brand-leaf: #77a91a;
+  --color-brand-canvas: #f5f5ee;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-brand-canvas);
+    color: var(--color-brand-ink);
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  ::selection {
+    background: var(--color-brand-lime);
+    color: var(--color-brand-ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

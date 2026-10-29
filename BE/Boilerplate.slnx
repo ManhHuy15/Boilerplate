@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Boilerplate.API/Boilerplate.API.csproj" />
+  <Project Path="Boilerplate.Application/Boilerplate.Application.csproj" />
+  <Project Path="Boilerplate.Domain/Boilerplate.Domain.csproj" />
+  <Project Path="Boilerplate.Infrastructure/Boilerplate.Infrastructure.csproj" />
+</Solution>
