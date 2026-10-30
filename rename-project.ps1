@@ -60,9 +60,14 @@ Write-Host "   - Lowercase  : $LowerName"
 Write-Host "   - Kebab-case : $KebabName"
 Write-Host ""
 
+function Clean-BuildArtifacts {
+    Remove-Item -Path "BE\*\bin", "BE\*\obj", "BE\bin", "BE\obj" -Recurse -Force -ErrorAction SilentlyContinue
+    Get-ChildItem -Path "BE" -Recurse -Directory -Force -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq "bin" -or $_.Name -eq "obj" } | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+}
+
 # 3. Dọn dẹp bin và obj
 Write-Host "🧹 Đang dọn dẹp thư mục build tạm thời (bin, obj)..." -ForegroundColor Yellow
-Get-ChildItem -Path "BE" -Recurse -Directory -Include "bin", "obj" -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+Clean-BuildArtifacts
 
 # 4. Thay thế nội dung file
 Write-Host "📝 Đang cập nhật nội dung các file..." -ForegroundColor Yellow
@@ -118,6 +123,9 @@ foreach ($layer in $layers) {
 }
 
 Write-Host "✅ Đã đổi tên toàn bộ file và code sang '$PascalName' thành công!" -ForegroundColor Green
+
+# Dọn dẹp lại toàn bộ bin/obj sau khi đổi tên
+Clean-BuildArtifacts
 
 # 7. BẮT BUỘC: Xóa Git cũ và khởi tạo Git mới sạch (Bảo vệ Repo gốc)
 Write-Host ""

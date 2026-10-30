@@ -67,9 +67,16 @@ echo "   - Lowercase  : $LOWER_NAME"
 echo "   - Kebab-case : $KEBAB_NAME"
 echo ""
 
-# 4. Dọn dẹp bin và obj cũ
+clean_build_artifacts() {
+    # Xóa trực tiếp qua glob để đảm bảo không bị lỗi traversal của find
+    rm -rf BE/*/bin BE/*/obj BE/bin BE/obj 2>/dev/null || true
+    # Quét đệ quy dọn sạch triệt để mọi thư mục bin/obj còn sót lại
+    find BE -depth -type d \( -name "bin" -o -name "obj" \) -exec rm -rf "{}" + 2>/dev/null || true
+}
+
+# 4. Dọn dẹp bin và obj cũ trước khi đổi tên
 echo "🧹 Đang dọn dẹp thư mục build tạm thời (bin, obj)..."
-find BE -type d \( -name "bin" -o -name "obj" \) -exec rm -rf {} + 2>/dev/null || true
+clean_build_artifacts
 
 # 5. Thay thế nội dung trong các file nguồn
 echo "📝 Đang cập nhật nội dung các file..."
@@ -129,6 +136,9 @@ for layer in API Application Domain Infrastructure; do
 done
 
 echo "✅ Đã đổi tên toàn bộ file và code sang '$PASCAL_NAME' thành công!"
+
+# Dọn dẹp lại toàn bộ bin/obj sau khi đổi tên để đảm bảo không còn sót file cache cũ
+clean_build_artifacts
 
 # 8. BẮT BUỘC: Xóa Git cũ và khởi tạo Git mới sạch (Bảo vệ Repo gốc, tránh push nhầm)
 echo ""
