@@ -1,0 +1,13 @@
+{
+  "files.exclude": {
+    "**/[Bb]in": true,
+    "**/[Oo]bj": true,
+    "**/.git": true,
+    "**/.DS_Store": true
+  },
+  "search.exclude": {
+    "**/[Bb]in": true,
+    "**/[Oo]bj": true,
+    "**/node_modules": true
+  }
+}
