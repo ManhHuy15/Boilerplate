@@ -20,6 +20,7 @@ trigger: always_on
 - Default to Server Components. Add `'use client'` only to the smallest component that needs state, effects, browser APIs, event handlers, client stores, or client-only libraries.
 - Fetch on the server when it improves security, caching, or initial rendering. Preserve the route's cache tags, revalidation policy, and dynamic/static rendering intent; invalidate affected data after mutations.
 - Keep authentication setup centralized. Do not scatter session checks, token refresh, or request interceptors across pages and components.
+- Enforce route guards consistently: protected screens redirect unauthenticated users to login; guest screens (such as login and register) redirect authenticated users to the dashboard.
 
 ## Folder ownership
 
@@ -55,6 +56,7 @@ FE/
 ## API, errors, and authentication
 
 - Centralize API paths and cross-cutting HTTP behavior such as base URL, serialization, authentication, cancellation, and standard error parsing.
+- Proxy backend API paths via Next.js rewrites (`/api/:path*`) to preserve same-origin cookie credentials and prevent CORS overhead during browser calls.
 - Use the repository's shared request client for browser calls. Use native `fetch` on the server when Next.js caching or revalidation semantics are required.
 - Validate both the HTTP status and expected response shape. Treat external data as unknown until it crosses the project's parsing or validation boundary.
 - Avoid direct request calls in presentational components. Put them in the owning feature service, query hook, or server-side data function.

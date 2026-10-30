@@ -29,7 +29,10 @@ public sealed class ExceptionHandlingMiddleware(
         var (statusCode, code, message) = exception switch
         {
             ArgumentException => (StatusCodes.Status400BadRequest, "validation_error", exception.Message),
-            UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "unauthorized", "Authentication is required."),
+            UnauthorizedAccessException => (
+                StatusCodes.Status401Unauthorized,
+                "unauthorized",
+                string.IsNullOrWhiteSpace(exception.Message) ? "Authentication is required." : exception.Message),
             KeyNotFoundException => (StatusCodes.Status404NotFound, "not_found", exception.Message),
             InvalidOperationException => (StatusCodes.Status409Conflict, "conflict", exception.Message),
             _ => (StatusCodes.Status500InternalServerError, "internal_error", "An unexpected error occurred.")

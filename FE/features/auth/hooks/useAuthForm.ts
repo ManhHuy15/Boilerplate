@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, type SubmitEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
   AUTH_CONSTRAINTS,
   AUTH_FIELDS,
   AUTH_FORM_MODES,
+  AUTH_STATUSES,
 } from "@/features/auth/constants/auth";
 import { useAuthStore } from "@/features/auth/hooks/useAuthStore";
 import type { AuthFormMode } from "@/features/auth/types/auth";
@@ -43,12 +44,19 @@ export function useAuthForm(mode: AuthFormMode) {
   const showNotification = useNotificationStore((state) => state.showNotification);
   const login = useAuthStore((state) => state.login);
   const register = useAuthStore((state) => state.register);
+  const status = useAuthStore((state) => state.status);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isLogin = mode === AUTH_FORM_MODES.login;
+
+  useEffect(() => {
+    if (status === AUTH_STATUSES.authenticated) {
+      router.replace(APP_ROUTES.dashboard);
+    }
+  }, [router, status]);
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -102,7 +110,7 @@ export function useAuthForm(mode: AuthFormMode) {
     showPassword,
     togglePasswordVisibility: () => setShowPassword((current) => !current),
     errors,
-    isSubmitting,
+    isSubmitting: isSubmitting || status === AUTH_STATUSES.loading || status === AUTH_STATUSES.authenticated,
     isLogin,
     handleSubmit,
   };

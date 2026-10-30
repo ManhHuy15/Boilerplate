@@ -59,6 +59,22 @@ public sealed class RefreshTokenService : IRefreshTokenService
                 cancellationToken);
 
         DateTime utcNow = DateTime.UtcNow;
+
+        if (storedToken is not null && (storedToken.RevokedAt is not null || storedToken.ReplacedByTokenHash is not null))
+        {
+            var compromisedTokens = await _dbContext.RefreshTokens
+                .Where(token => token.AccountId == storedToken.AccountId && token.RevokedAt == null)
+                .ToListAsync(cancellationToken);
+
+            foreach (RefreshToken token in compromisedTokens)
+            {
+                token.RevokedAt = utcNow;
+            }
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            throw new UnauthorizedAccessException("Refresh token reuse detected. All active sessions have been terminated.");
+        }
+
         if (storedToken is null ||
             !storedToken.IsActive(utcNow) ||
             !storedToken.Account.IsActive)

@@ -1,5 +1,6 @@
 using Boilerplate.Application.InfraInterfaces;
 using Boilerplate.Application.Settings;
+using Boilerplate.Infrastructure.BackgroundServices;
 using Boilerplate.Infrastructure.Data;
 using Boilerplate.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ public static class DependencyInjection
             serviceProvider.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<IPasswordService, PasswordService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddHostedService<TokenCleanupBackgroundService>();
 
         return services;
     }

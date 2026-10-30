@@ -34,3 +34,16 @@ cd FE
 npm install
 npm run dev
 ```
+
+### 3. Khởi chạy toàn bộ hệ thống bằng Docker Compose (Khuyên dùng cho Production)
+
+Chỉ cần một lệnh duy nhất để khởi động toàn bộ PostgreSQL, Backend API và Frontend:
+
+```bash
+docker compose up --build -d
+```
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8080
+- **Health Check**: http://localhost:8080/api/health
+- **PostgreSQL**: localhost:5432

@@ -74,17 +74,18 @@ API --> Application --> Domain
 - Access tokens may be returned only by the Auth contract. Never return raw refresh tokens in JSON.
 - Generate refresh tokens cryptographically, store only SHA-256 hashes, and send raw values only through the configured `HttpOnly` cookie.
 - Preserve refresh-cookie `Secure`, `SameSite`, path, expiration, and essential settings. Cross-site cookies require `SameSite=None`, `Secure=true`, HTTPS, and deliberate CORS credentials.
-- Rotation revokes the old token, records its replacement hash, creates the new token, and saves atomically. Logout is idempotent and always deletes the cookie.
+- Rotation revokes the old token, records its replacement hash, creates the new token, and saves atomically. Detect token replay/reuse: if an already-revoked or rotated token is presented again, immediately revoke all active refresh tokens of that account and abort. Logout is idempotent and always deletes the cookie.
+- Prune expired and revoked refresh tokens periodically using a dedicated background service in Infrastructure.
 - Public registration always assigns `User`; never accept privileged roles from the request. Authentication failures must not reveal whether an account exists.
 
 ## Configuration, migrations, and operations
 
-- Bind sealed typed settings and validate required configuration at startup.
+- Bind sealed typed settings (`DatabaseSettings`, `JwtSettings`, `CorsSettings`) and validate required configuration at startup.
 - Supply `Database__ConnectionString` and `Jwt__SecretKey` through environment variables or a secret store. Never commit real secrets; JWT keys require at least 32 UTF-8 bytes.
 - Keep non-secret variable names and safe placeholders in `BE/Boilerplate.API/.env.example`, beside `appsettings.json`. Keep the real `.env` ignored; remember that the standard .NET CLI does not load dotenv files automatically.
 - API port is `8080`. Development may disable cookie `Secure` only for local HTTP; production uses HTTPS.
 - Register Swagger/OpenAPI and expose Swagger UI only in Development. Keep JWT Bearer authorization configured in Swagger for protected endpoint testing.
-- Preserve middleware order: exception handling, HTTPS redirection, authentication, authorization, controller mapping.
+- Preserve middleware order: exception handling, HTTPS redirection, CORS, authentication, authorization, controller mapping.
 - Use structured logs and trace IDs. Never log passwords, tokens, keys, connection strings, cookies, or unnecessary personal data.
 - Create schema changes with the repository-local EF tool. Do not hand-edit migration designer or snapshot files. Review generated types, keys, delete behavior, indexes, and extensions.
 - Build Debug before migration commands. Rebuild Debug after generating a migration before checking pending model changes, so EF does not use a stale snapshot.

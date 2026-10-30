@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: boilerplate-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: boilerplate
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: change_me_in_production
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d boilerplate"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./BE
+      dockerfile: Dockerfile
+    container_name: boilerplate-be
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Database__ConnectionString: "Host=postgres;Port=5432;Database=boilerplate;Username=postgres;Password=change_me_in_production"
+      Jwt__SecretKey: "replace_this_with_a_production_random_secret_at_least_32_bytes_long"
+      Jwt__Issuer: "Boilerplate.API"
+      Jwt__Audience: "Boilerplate.Client"
+      Jwt__AccessTokenMinutes: 15
+      Jwt__RefreshTokenDays: 7
+      Jwt__RefreshCookieName: "boilerplate_refresh_token"
+      Jwt__RefreshCookieSecure: "false"
+      Jwt__RefreshCookieSameSite: "Strict"
+      Cors__AllowedOrigins__0: "http://localhost:3000"
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./FE
+      dockerfile: Dockerfile
+    container_name: boilerplate-fe
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: production
+      API_BASE_URL: "http://backend:8080"
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:

@@ -60,12 +60,15 @@ public sealed class Program
             });
 
         ConfigureValidationResponses(services);
+        ConfigureCors(services, configuration);
         ConfigureDatabaseSettings(services, configuration);
         ConfigureJwtAuthentication(services, configuration);
         ConfigureSwagger(services, environment);
 
         services.AddAuthorization();
-        services.AddHealthChecks();
+        services
+            .AddHealthChecks()
+            .AddCheck<DatabaseHealthCheck>("database");
         services.AddApplication();
         services.AddInfrastructure();
     }
@@ -127,6 +130,39 @@ public sealed class Program
 
                 return new BadRequestObjectResult(response);
             };
+        });
+    }
+
+    private static void ConfigureCors(
+        IServiceCollection services,
+        IConfiguration configuration)
+    {
+        IConfigurationSection corsSection = configuration.GetSection(CorsSettings.SectionName);
+        CorsSettings corsSettings = corsSection.Get<CorsSettings>() ?? new CorsSettings();
+
+        services
+            .AddOptions<CorsSettings>()
+            .Bind(corsSection);
+
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                if (corsSettings.AllowedOrigins.Length > 0)
+                {
+                    policy.WithOrigins(corsSettings.AllowedOrigins)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                }
+                else
+                {
+                    policy.SetIsOriginAllowed(_ => true)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                }
+            });
         });
     }
 
@@ -234,6 +270,7 @@ public sealed class Program
     {
         app.UseMiddleware<ExceptionHandlingMiddleware>();
         app.UseHttpsRedirection();
+        app.UseCors();
 
         if (app.Environment.IsDevelopment())
         {
