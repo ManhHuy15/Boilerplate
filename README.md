@@ -14,12 +14,12 @@ Sau khi clone boilerplate về máy, bạn có thể đổi tên dự án thành
 
 **Trên Linux / macOS (Bash):**
 ```bash
-./rename-project.sh MyStore --reset-git
+./rename-project.sh MyStore
 ```
 
 **Trên Windows (PowerShell):**
 ```powershell
-.\rename-project.ps1 -NewName MyStore -ResetGit
+.\rename-project.ps1 -NewName MyStore
 ```
 
 Script sẽ tự động:
