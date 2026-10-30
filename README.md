@@ -8,6 +8,28 @@ Dự án mẫu chuẩn (Boilerplate) kết hợp **ASP.NET Core Web API (.NET 10
 - [`FE/`](./FE): Frontend Next.js 16 App Router, TypeScript strict, Tailwind CSS v4, HeroUI component library và Zustand.
 - [`.agents/rules/`](./.agents/rules): Quy chuẩn kiến trúc kỹ thuật chi tiết dành cho Backend (`BE.md`) và Frontend (`FE.md`).
 
+## Bắt đầu dự án mới từ Boilerplate
+
+Sau khi clone boilerplate về máy, bạn có thể đổi tên dự án thành tên nghiệp vụ của bạn và khởi tạo Git mới bằng script tự động:
+
+**Trên Linux / macOS (Bash):**
+```bash
+./rename-project.sh MyStore --reset-git
+```
+
+**Trên Windows (PowerShell):**
+```powershell
+.\rename-project.ps1 -NewName MyStore -ResetGit
+```
+
+Script sẽ tự động:
+1. Đổi tên toàn bộ namespace C#, projects `.csproj`, solution `.slnx`, thư mục backend.
+2. Đổi tên package Frontend, title, brand name, cookies, database name.
+3. Cập nhật `docker-compose.yml` và cấu hình môi trường.
+4. Xóa lịch sử Git cũ và tạo commit khởi đầu (`feat: initialize MyStore project from boilerplate`) sẵn sàng để bạn push lên repo mới.
+
+---
+
 ## Khởi chạy dự án
 
 ### 1. Backend (`BE/`)
