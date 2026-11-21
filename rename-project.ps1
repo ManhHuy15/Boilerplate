@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Script đổi tên dự án Boilerplate và khởi tạo Git mới cho Windows (PowerShell).
 .EXAMPLE
