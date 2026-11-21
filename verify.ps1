@@ -66,15 +66,19 @@ finally {
 # 2. Frontend Verification
 Push-Location (Join-Path $RepoRoot "FE")
 try {
-    Write-Host "`n[3/5] Running Frontend ESLint (Architectural Boundaries & Import Rules)..." -ForegroundColor Yellow
+    Write-Host "`n[3/6] Verifying package-lock.json synchronization (npm ci --dry-run)..." -ForegroundColor Yellow
+    npm ci --dry-run --ignore-scripts
+    if ($LASTEXITCODE -ne 0) { throw "FE/package-lock.json is out of sync with FE/package.json (npm ci failed)." }
+
+    Write-Host "`n[4/6] Running Frontend ESLint (Architectural Boundaries & Import Rules)..." -ForegroundColor Yellow
     npm run lint
     if ($LASTEXITCODE -ne 0) { throw "Frontend lint failed." }
 
-    Write-Host "`n[4/5] Running Frontend TypeScript Strict Typecheck..." -ForegroundColor Yellow
+    Write-Host "`n[5/6] Running Frontend TypeScript Strict Typecheck..." -ForegroundColor Yellow
     npm run typecheck
     if ($LASTEXITCODE -ne 0) { throw "Frontend typecheck failed." }
 
-    Write-Host "`n[5/5] Running Frontend Runtime Guard & API Contract Tests..." -ForegroundColor Yellow
+    Write-Host "`n[6/6] Running Frontend Runtime Guard & API Contract Tests..." -ForegroundColor Yellow
     npm test
     if ($LASTEXITCODE -ne 0) { throw "Frontend tests failed." }
 }
