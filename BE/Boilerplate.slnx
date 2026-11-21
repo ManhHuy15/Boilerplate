@@ -3,4 +3,6 @@
   <Project Path="Boilerplate.Application/Boilerplate.Application.csproj" />
   <Project Path="Boilerplate.Domain/Boilerplate.Domain.csproj" />
   <Project Path="Boilerplate.Infrastructure/Boilerplate.Infrastructure.csproj" />
+  <Project Path="Boilerplate.Tests/Boilerplate.Tests.csproj" />
 </Solution>
+

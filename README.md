@@ -32,6 +32,13 @@ Script sẽ tự động:
 
 ## Khởi chạy dự án
 
+### 0. Hạ tầng Cơ sở dữ liệu (`docker-compose.yml`)
+Khởi chạy nhanh PostgreSQL cô lập tại cổng `5432`:
+
+```powershell
+docker compose up -d
+```
+
 ### 1. Backend (`BE/`)
 Chi tiết xem thêm tại [`BE/README.md`](./BE/README.md).
 

@@ -129,7 +129,7 @@ fi
 
 # 7. Đổi tên các thư mục Backend
 echo "📂 Đang đổi tên các thư mục Backend..."
-for layer in API Application Domain Infrastructure; do
+for layer in API Application Domain Infrastructure Tests; do
     if [ -d "BE/${CURRENT_PROJECT_NAME}.${layer}" ]; then
         mv "BE/${CURRENT_PROJECT_NAME}.${layer}" "BE/${PASCAL_NAME}.${layer}"
     fi

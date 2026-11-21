@@ -1,0 +1,47 @@
+root = true
+
+[*]
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{csproj,props,targets,slnx,json}]
+indent_size = 2
+
+[*.cs]
+# File-scoped namespaces (BE.md: "Use file-scoped namespaces")
+csharp_style_namespace_declarations = file_scoped:error
+
+# Sealed classes and clean code preferences
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
+csharp_prefer_Primary_constructors = false:none
+
+# Naming rule: private fields must be _camelCase (BE.md: "private readonly fields, and _camelCase field names")
+dotnet_naming_rule.private_instance_fields_should_be_camel_case_prefixed.severity = error
+dotnet_naming_rule.private_instance_fields_should_be_camel_case_prefixed.symbols = private_instance_fields
+dotnet_naming_rule.private_instance_fields_should_be_camel_case_prefixed.style = camel_case_underscore_prefix
+
+dotnet_naming_symbols.private_instance_fields.applicable_kinds = field
+dotnet_naming_symbols.private_instance_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_instance_fields.required_modifiers = 
+
+dotnet_naming_style.camel_case_underscore_prefix.required_prefix = _
+dotnet_naming_style.camel_case_underscore_prefix.capitalization = camel_case
+
+# Naming rule: public members must be PascalCase (BE.md: "PascalCase public members")
+dotnet_naming_rule.public_members_must_be_pascal_case.severity = error
+dotnet_naming_rule.public_members_must_be_pascal_case.symbols = public_symbols
+dotnet_naming_rule.public_members_must_be_pascal_case.style = pascal_case_style
+
+dotnet_naming_symbols.public_symbols.applicable_kinds = class, struct, interface, enum, property, method, event
+dotnet_naming_symbols.public_symbols.applicable_accessibilities = public, internal, protected
+
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+
+# EF Core auto-generated migrations use block-scoped namespaces by default
+[**/Data/Migrations/*.cs]
+generated_code = true
+csharp_style_namespace_declarations = file_scoped:none
+

@@ -1,0 +1,64 @@
+name: High-Trust Verification Gate
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  backend-verify:
+    name: Backend (.NET 10 Build, Analyzers & Tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: BE
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: BE/global.json
+
+      - name: Restore dependencies
+        run: dotnet restore Boilerplate.slnx
+
+      - name: Build Release (TreatWarningsAsErrors + EditorConfig)
+        run: dotnet build Boilerplate.slnx --configuration Release --no-restore
+
+      - name: Run Architecture, Contract & Auth Workflow Tests
+        run: dotnet test Boilerplate.Tests/Boilerplate.Tests.csproj --configuration Release --no-build --verbosity normal
+
+  frontend-verify:
+    name: Frontend (ESLint Boundaries, TypeScript & Contract Tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: FE
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: FE/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint (Architectural Boundaries & Code Rules)
+        run: npm run lint
+
+      - name: Run TypeScript Strict Typecheck
+        run: npm run typecheck
+
+      - name: Run Frontend Contract & Guard Tests
+        run: npm test
+
+      - name: Build Production Next.js Bundle
+        run: npm run build

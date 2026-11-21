@@ -84,7 +84,13 @@ FE/
 ## Changes and verification
 
 - Make the smallest complete change. Search for existing helpers and all callers before changing shared code; fix the shared root cause rather than patching one screen.
-- Coordinate API contract changes with `BE/` rather than silently translating or guessing fields in the frontend.
-- For non-trivial client logic, add the smallest focused test when the repository has a suitable setup; do not introduce a test framework solely for one change.
-- Run the configured formatter or linter, type checker, relevant tests, and production build. If verification cannot run, report exactly what was not run and why.
+- **Deterministic ESLint Boundary Gates (`FE/eslint.config.mjs`):**
+  - `@typescript-eslint/no-explicit-any` and `@typescript-eslint/consistent-type-imports` are enforced as errors.
+  - `components/**`, `shared/**`, and `lib/**` are strictly forbidden from importing from `@/features/*`.
+  - Presentational components and screens (`components/**`, `features/**/components/**`, `features/**/*Page.tsx`, `features/**/*Screen.tsx`) are forbidden from calling `fetch()`, `apiRequest()`, or importing `@/features/*/services/*` directly.
+  - Feature services (`features/**/services/**`) are strictly transport-only and forbidden from importing `react`, `next/navigation`, `zustand`, stores, hooks, or UI components.
+  - Never disable these ESLint rules with `eslint-disable` comments to bypass architectural boundaries.
+- **Cross-Boundary Contract Synchronization:** Coordinate API contract changes with `BE/` rather than silently translating or guessing fields in the frontend. Whenever DTOs, enum values, or validation limits change, update the runtime type guards (`features/**/utils/*Guards.ts`), constants (`features/**/constants/*.ts`), FE contract tests (`**/*.test.ts`), and BE `CrossBoundaryContractTests.cs` together.
+- For non-trivial client logic or new API endpoints, add focused unit/contract tests (`*.test.ts`) executed by Node's built-in test runner (`npm test` using `lib/testLoader.mjs`).
+- Run `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build` (or run `../verify.ps1` from the repository root). If verification cannot run, report exactly what was not run and why.
 - Do not modify generated output, `node_modules`, lockfiles without a dependency change, or unrelated files.

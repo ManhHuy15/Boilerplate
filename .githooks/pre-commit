@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e
+
+echo "[Pre-commit] Running High-Trust Verification Gate..."
+if command -v pwsh >/dev/null 2>&1; then
+  pwsh -NoProfile -ExecutionPolicy Bypass -File ./verify.ps1
+elif command -v powershell >/dev/null 2>&1; then
+  powershell -NoProfile -ExecutionPolicy Bypass -File ./verify.ps1
+else
+  (cd BE && dotnet build Boilerplate.slnx --configuration Release && dotnet test Boilerplate.Tests/Boilerplate.Tests.csproj --configuration Release --no-build)
+  (cd FE && npm run lint && npm run typecheck && npm test)
+fi

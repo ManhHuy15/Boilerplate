@@ -17,7 +17,8 @@ BE/
 |-- Boilerplate.API/             Controllers, Common, Middlewares, Program.cs
 |-- Boilerplate.Application/     InfraInterfaces, Services/<Feature>Services/DTOs, Settings
 |-- Boilerplate.Infrastructure/  Data/Configurations, Data/Migrations, Security
-`-- Boilerplate.Domain/          BaseEntity, Entities, Enums
+|-- Boilerplate.Domain/          BaseEntity, Entities, Enums
+`-- Boilerplate.Tests/           Architecture, Cross-Boundary Contract, and Auth Workflow Tests
 ```
 
 ```text
@@ -95,8 +96,13 @@ API --> Application --> Domain
 ## Verification
 
 - Search all callers before changing contracts, namespaces, DTOs, claims, settings, entities, or fields. Preserve unrelated edits; never edit `bin/`, `obj/`, or user-specific project files.
-- At minimum run `dotnet build Boilerplate.slnx --configuration Release --no-restore`.
+- **Deterministic Compiler & Style Gates:** `BE/Directory.Build.props` enforces `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` and `<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>`, backed by `BE/.editorconfig` (file-scoped namespaces, `_camelCase` private fields, `PascalCase` public members). Do not suppress warnings or weaken `.editorconfig` rules to force a build to pass.
+- **Automated Architecture & Contract Tests:** Run `dotnet test Boilerplate.Tests/Boilerplate.Tests.csproj --configuration Release` after building.
+  - `ArchitectureConventionsTests` mechanically verifies layer dependencies, `sealed` concrete classes, thin `BaseController` inheritance without `DbContext`/Infrastructure injection, no domain entity exposure in controller signatures, and `[JsonIgnore]` on raw refresh tokens.
+  - `CrossBoundaryContractTests` verifies that serialized JSON shapes (`camelCase`), `AccountRole` enum strings, and DataAnnotation lengths stay synchronized with `FE/` runtime guards (`authGuards.ts`, `apiClient.ts`) and constants (`auth.ts`). Update both sides and their contract tests together when changing DTOs.
+  - `AuthWorkflowTests` verifies registration, password hashing, JWT claim restrictions, refresh token rotation/reuse detection, and soft-delete query filters.
+- At minimum run `dotnet build Boilerplate.slnx --configuration Release --no-restore` and `dotnet test Boilerplate.Tests/Boilerplate.Tests.csproj --configuration Release --no-build` (or run `../verify.ps1` from the repository root).
 - For EF changes, build Debug, review the migration, then run `dotnet ef migrations has-pending-model-changes` with required environment variables.
 - For Auth/HTTP changes, smoke-test port 8080, health, affected Auth endpoints, and standardized unauthorized/validation responses when possible.
-- Add focused tests when a test project exists; do not introduce a test framework only for one small change.
+- Add focused tests in `Boilerplate.Tests` when adding or changing business workflows, contracts, or architectural rules.
 - If verification cannot run, report exactly what was not run and why.

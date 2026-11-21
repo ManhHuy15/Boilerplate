@@ -2,19 +2,28 @@ using Boilerplate.API.Common;
 
 namespace Boilerplate.API.Middlewares;
 
-public sealed class ExceptionHandlingMiddleware(
-    RequestDelegate next,
-    ILogger<ExceptionHandlingMiddleware> logger)
+public sealed class ExceptionHandlingMiddleware
 {
+    private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+
+    public ExceptionHandlingMiddleware(
+        RequestDelegate next,
+        ILogger<ExceptionHandlingMiddleware> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await next(context);
+            await _next(context);
         }
         catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
         {
-            logger.LogInformation("Request {TraceId} was cancelled by the client.", context.TraceIdentifier);
+            _logger.LogInformation("Request {TraceId} was cancelled by the client.", context.TraceIdentifier);
         }
         catch (Exception exception)
         {
@@ -40,11 +49,11 @@ public sealed class ExceptionHandlingMiddleware(
 
         if (statusCode >= StatusCodes.Status500InternalServerError)
         {
-            logger.LogError(exception, "Unhandled exception for request {TraceId}.", context.TraceIdentifier);
+            _logger.LogError(exception, "Unhandled exception for request {TraceId}.", context.TraceIdentifier);
         }
         else
         {
-            logger.LogWarning(exception, "Request {TraceId} failed with {StatusCode}.", context.TraceIdentifier, statusCode);
+            _logger.LogWarning(exception, "Request {TraceId} failed with {StatusCode}.", context.TraceIdentifier, statusCode);
         }
 
         context.Response.StatusCode = statusCode;

@@ -6,10 +6,19 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 namespace Boilerplate.API.Controllers;
 
 [Route("api/[controller]")]
-public sealed class HealthController(
-    HealthCheckService healthCheckService,
-    IHostEnvironment environment) : BaseController
+public sealed class HealthController : BaseController
 {
+    private readonly HealthCheckService _healthCheckService;
+    private readonly IHostEnvironment _environment;
+
+    public HealthController(
+        HealthCheckService healthCheckService,
+        IHostEnvironment environment)
+    {
+        _healthCheckService = healthCheckService;
+        _environment = environment;
+    }
+
     [AllowAnonymous]
     [HttpGet]
     [ProducesResponseType<ApiResponse<HealthResponse>>(StatusCodes.Status200OK)]
@@ -17,10 +26,10 @@ public sealed class HealthController(
     public async Task<ActionResult<ApiResponse<HealthResponse>>> GetAsync(
         CancellationToken cancellationToken)
     {
-        var report = await healthCheckService.CheckHealthAsync(cancellationToken);
+        var report = await _healthCheckService.CheckHealthAsync(cancellationToken);
         var response = new HealthResponse(
             report.Status.ToString(),
-            environment.EnvironmentName,
+            _environment.EnvironmentName,
             DateTimeOffset.UtcNow);
 
         return report.Status == HealthStatus.Healthy

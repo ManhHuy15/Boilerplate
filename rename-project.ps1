@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Script đổi tên dự án Boilerplate và khởi tạo Git mới cho Windows (PowerShell).
 .EXAMPLE
@@ -114,7 +114,7 @@ if (Test-Path "BE\$CurrentProjectName.slnx") {
 
 # 6. Đổi tên các thư mục Backend
 Write-Host "📂 Đang đổi tên các thư mục Backend..." -ForegroundColor Yellow
-$layers = @("API", "Application", "Domain", "Infrastructure")
+$layers = @("API", "Application", "Domain", "Infrastructure", "Tests")
 foreach ($layer in $layers) {
     $oldDir = "BE\$CurrentProjectName.$layer"
     if (Test-Path $oldDir) {

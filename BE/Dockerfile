@@ -3,11 +3,12 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0-noble AS build
 WORKDIR /src
 
 # Copy solution and project manifests first for layer caching
-COPY Boilerplate.slnx Directory.Build.props global.json ./
+COPY Boilerplate.slnx Directory.Build.props .editorconfig global.json ./
 COPY Boilerplate.Domain/Boilerplate.Domain.csproj Boilerplate.Domain/
 COPY Boilerplate.Application/Boilerplate.Application.csproj Boilerplate.Application/
 COPY Boilerplate.Infrastructure/Boilerplate.Infrastructure.csproj Boilerplate.Infrastructure/
 COPY Boilerplate.API/Boilerplate.API.csproj Boilerplate.API/
+COPY Boilerplate.Tests/Boilerplate.Tests.csproj Boilerplate.Tests/
 
 RUN dotnet restore Boilerplate.slnx
 

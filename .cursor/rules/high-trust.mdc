@@ -1,0 +1,13 @@
+---
+description: High-Trust Architecture, Contract & Verification Rules for Fullstack Boilerplate (.NET 10 + Next.js 16)
+globs: "**/*"
+alwaysApply: true
+---
+
+# High-Trust Agent Rules
+
+Always read and follow `AGENTS.md`, `.agents/rules/BE.md` (for `BE/**`), and `.agents/rules/FE.md` (for `FE/**`).
+
+- Do not use escape hatches (`#pragma warning disable`, `eslint-disable`, `@ts-ignore`, `any`).
+- Never hand-edit auto-generated files (`*.Designer.cs`, `ApplicationDbContextModelSnapshot.cs`, `FE/next-env.d.ts`, `bin/`, `obj/`, `.next/`, or `package-lock.json` without a `package.json` change).
+- Run `./verify.ps1` after making changes to verify Backend Release build, Architecture/Contract/Auth tests, Frontend ESLint boundaries, TypeScript strict typecheck, and Frontend runtime guard tests.

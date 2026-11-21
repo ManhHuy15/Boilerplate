@@ -6,11 +6,15 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Boilerplate.Infrastructure.Data;
 
-public sealed class ApplicationDbContext(
-    DbContextOptions<ApplicationDbContext> options)
-    : DbContext(options), IApplicationDbContext
+public sealed class ApplicationDbContext
+    : DbContext, IApplicationDbContext
 {
     private const string SoftDeletionFilter = "SoftDeletionFilter";
+
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
+    {
+    }
 
     public DbSet<Account> Accounts => Set<Account>();
 
